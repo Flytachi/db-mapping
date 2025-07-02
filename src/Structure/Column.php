@@ -15,6 +15,7 @@ class Column implements StructureInterface
         public array $indexes = [],
         public ?ForeignKey $foreignKey = null,
     ) {
+        NameValidator::validate($name);
     }
 
     public function toSql(string $tableName, string $dialect = 'mysql'): string

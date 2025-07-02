@@ -11,8 +11,12 @@ class Index implements StructureInterface
         public ?string $name = null,
         public IndexType $type = IndexType::INDEX,
         public IndexMethod $method = IndexMethod::BTREE,
-        public ?string $where = null
+        public ?string $where = null,
+        public array $includeColumns = [] // New property for PostgreSQL INCLUDE clause
     ) {
+        if ($name) {
+            NameValidator::validate($name);
+        }
     }
 
     public function toSql(string $tableName, string $dialect = 'mysql'): string
@@ -32,11 +36,15 @@ class Index implements StructureInterface
         if ($dialect === 'pgsql') {
             $methodSql = $this->method !== IndexMethod::BTREE ? "USING {$this->method->value}" : '';
             $whereSql = $this->where ? " WHERE {$this->where}" : '';
+            $includeSql = !empty($this->includeColumns)
+                ? ' INCLUDE (' . implode(', ', $this->includeColumns) . ')'
+                : '';
 
             return match ($this->type) {
                 IndexType::PRIMARY => "PRIMARY KEY {$columnsSql}",
-                IndexType::UNIQUE => "UNIQUE {$columnsSql} {$methodSql}{$whereSql}",
-                IndexType::INDEX => "INDEX {$nameSql} {$methodSql} ON {$tableName} {$columnsSql}{$whereSql}",
+                IndexType::UNIQUE => "UNIQUE {$columnsSql} {$methodSql}{$includeSql}{$whereSql}",
+                IndexType::INDEX => "INDEX {$nameSql} {$methodSql} "
+                    . "ON {$tableName} {$columnsSql}{$includeSql}{$whereSql}",
             };
         }
 
