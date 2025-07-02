@@ -12,7 +12,8 @@ class Table implements StructureInterface
         public array $columns,
         /** @var Index[] */
         public array $indexes = []
-    ) {}
+    ) {
+    }
 
     public function toSql(string $dialect = 'mysql'): string
     {

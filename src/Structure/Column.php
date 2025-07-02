@@ -14,7 +14,8 @@ class Column implements StructureInterface
         /** @var Index[] */
         public array $indexes = [],
         public ?ForeignKey $foreignKey = null,
-    ) {}
+    ) {
+    }
 
     public function toSql(string $tableName, string $dialect = 'mysql'): string
     {

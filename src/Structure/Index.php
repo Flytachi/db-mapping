@@ -12,7 +12,8 @@ class Index implements StructureInterface
         public IndexType $type = IndexType::INDEX,
         public IndexMethod $method = IndexMethod::BTREE,
         public ?string $where = null
-    ) {}
+    ) {
+    }
 
     public function toSql(string $tableName, string $dialect = 'mysql'): string
     {

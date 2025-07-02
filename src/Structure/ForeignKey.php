@@ -9,7 +9,8 @@ class ForeignKey implements StructureInterface
         public string $referencedColumn,
         public ForeignKeyAction $onUpdate = ForeignKeyAction::RESTRICT,
         public ForeignKeyAction $onDelete = ForeignKeyAction::RESTRICT,
-    ) {}
+    ) {
+    }
 
     public function toSql(string $tableName, string $columnName, string $dialect = 'mysql'): string
     {
