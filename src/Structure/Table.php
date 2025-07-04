@@ -42,6 +42,15 @@ class Table implements StructureInterface
 
         foreach ($this->columns as $column) {
             $columnDefinitions[] = '  ' . $column->toSql($this->name, $dialect);
+
+            foreach ($column->constraintsSql($this->name, $dialect) as $constraint) {
+                if ($dialect === 'pgsql' && str_starts_with($constraint, 'INDEX ')) {
+                    // отложим для отдельного CREATE INDEX
+                    $indexStatements[] = 'CREATE ' . $constraint . ';';
+                } else {
+                    $constraints[] = '  ' . $constraint;
+                }
+            }
         }
 
         foreach ($this->indexes as $index) {

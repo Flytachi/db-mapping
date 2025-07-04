@@ -48,4 +48,52 @@ class Column implements StructureInterface
 
         return $result;
     }
+
+    public static function getPrimitiveSqlType(array $types, string $dialect = 'mysql'): string
+    {
+        $types = array_filter($types, fn($type) => $type !== 'null');
+
+        // Normalize types to lowercase for easier comparison
+        $types = array_map('strtolower', $types);
+        sort($types);
+
+        if (count($types) == 1) {
+            return match ($types[0]) {
+                'bool' => 'BOOLEAN',
+                'int' => 'INT',
+                'float' => match ($dialect) {
+                    'mysql' => 'FLOAT',
+                    'pgsql' => 'REAL',
+                    default => 'TEXT', // Fallback for unknown dialects
+                },
+                'string' => 'VARCHAR',
+                default => 'TEXT',
+            };
+        } elseif (count($types) > 1) {
+            // Handle combined types
+            if (in_array('float', $types) && in_array('int', $types)) {
+                return match ($dialect) {
+                    'mysql' => 'DOUBLE',
+                    'pgsql' => 'DOUBLE PRECISION',
+                    default => 'TEXT',
+                };
+            }
+
+            // int|string -> TEXT or VARCHAR, depending on expected length
+            // For simplicity, let's map to TEXT for now, as it's a common fallback for mixed types
+            if (in_array('int', $types) && in_array('string', $types)) {
+                return 'TEXT';
+            }
+
+            // bool|int -> INT (0 or 1 for bool, plus int range)
+            if (in_array('bool', $types) && in_array('int', $types)) {
+                return 'INT';
+            }
+
+            // Fallback for any other unhandled combinations
+            return 'TEXT';
+        }
+
+        return 'TEXT'; // Default for empty or unhandled cases
+    }
 }

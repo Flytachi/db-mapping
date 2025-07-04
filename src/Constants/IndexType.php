@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Flytachi\DbMapping\Structure;
+namespace Flytachi\DbMapping\Constants;
 
 enum IndexType: string
 {

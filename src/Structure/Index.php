@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Flytachi\DbMapping\Structure;
 
+use Flytachi\DbMapping\Constants\IndexMethod;
+use Flytachi\DbMapping\Constants\IndexType;
+
 class Index implements StructureInterface
 {
     public function __construct(

@@ -3,17 +3,17 @@
 require 'vendor/autoload.php';
 
 
+use Flytachi\DbMapping\Constants\IndexType;
 use Flytachi\DbMapping\DbMappingBetta;
+use Flytachi\DbMapping\DbMappingInterface;
+use Flytachi\DbMapping\Structure\CheckConstraint;
 use Flytachi\DbMapping\Structure\Column;
 use Flytachi\DbMapping\Structure\ForeignKey;
 use Flytachi\DbMapping\Structure\Index;
-use Flytachi\DbMapping\Structure\IndexType;
-use Flytachi\DbMapping\Structure\Table;
-use Flytachi\DbMapping\Structure\CheckConstraint;
-use Flytachi\DbMapping\Structure\View;
 use Flytachi\DbMapping\Structure\StoredProcedure;
+use Flytachi\DbMapping\Structure\Table;
 use Flytachi\DbMapping\Structure\Trigger;
-use Flytachi\DbMapping\DbMappingInterface;
+use Flytachi\DbMapping\Structure\View;
 
 
 $dialect = 'pgsql';
@@ -89,7 +89,7 @@ if ($mapper instanceof DbMappingInterface) {
 }
 
 // 8. Test improved ForeignKey handling
-$fk = new ForeignKey('users', 'id', name: 'fk_test_users', columnName: 'user_id');
+$fk = new ForeignKey('users', 'id', name: 'fk_test_users');
 $tableWithFk = new Table(
     name: 'test_fk',
     columns: [new Column('id', 'INT'), new Column('user_id', 'INT')],

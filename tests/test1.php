@@ -1,10 +1,10 @@
 <?php
 
+use Flytachi\DbMapping\Constants\ForeignKeyAction;
+use Flytachi\DbMapping\Constants\IndexType;
 use Flytachi\DbMapping\Structure\Column;
 use Flytachi\DbMapping\Structure\ForeignKey;
-use Flytachi\DbMapping\Structure\ForeignKeyAction;
 use Flytachi\DbMapping\Structure\Index;
-use Flytachi\DbMapping\Structure\IndexType;
 use Flytachi\DbMapping\Structure\Table;
 
 require 'vendor/autoload.php';
