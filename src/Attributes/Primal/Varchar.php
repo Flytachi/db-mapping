@@ -8,7 +8,7 @@ use Attribute;
 readonly class Varchar implements AttributeDbType
 {
     public function __construct(
-        private int $length = 0,
+        private int $length = 255,
     ) {
     }
 

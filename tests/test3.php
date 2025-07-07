@@ -7,6 +7,7 @@ use Flytachi\DbMapping\Attributes\Constraint\Primary;
 use Flytachi\DbMapping\Attributes\Constraint\Unique;
 use Flytachi\DbMapping\Attributes\Foreign;
 use Flytachi\DbMapping\Attributes\Primal\BigInteger;
+use Flytachi\DbMapping\Attributes\Primal\Boolean;
 use Flytachi\DbMapping\Attributes\Primal\Decimal;
 use Flytachi\DbMapping\Attributes\Primal\Json;
 use Flytachi\DbMapping\Attributes\Primal\Timestamp;
@@ -33,7 +34,8 @@ class ChargeTypeModel
     #[Varchar(length: 20)]
     public string $billing_code;
 
-    #[Index]
+    #[Index(columns: ['billing_code'])]
+    #[Boolean]
     public bool $is_delete = false;
 }
 

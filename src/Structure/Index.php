@@ -31,7 +31,7 @@ class Index implements StructureInterface
         if ($dialect === 'mysql') {
             return match ($this->type) {
                 IndexType::PRIMARY => "PRIMARY KEY {$columnsSql}",
-                IndexType::UNIQUE => "CREATE UNIQUE INDEX {$nameSql}_uidx {$columnsSql} USING {$this->method->value}",
+                IndexType::UNIQUE => "CREATE UNIQUE INDEX {$nameSql}_udx {$columnsSql} USING {$this->method->value}",
                 IndexType::INDEX => "CREATE INDEX {$nameSql}_idx {$columnsSql} USING {$this->method->value}",
             };
         }
@@ -45,7 +45,7 @@ class Index implements StructureInterface
 
             return match ($this->type) {
                 IndexType::PRIMARY => "PRIMARY KEY {$columnsSql}",
-                IndexType::UNIQUE => "CREATE UNIQUE INDEX IF NOT EXISTS {$nameSql}_uidx {$methodSql} "
+                IndexType::UNIQUE => "CREATE UNIQUE INDEX IF NOT EXISTS {$nameSql}_udx {$methodSql} "
                     . "ON {$tableName} {$columnsSql}{$includeSql}{$whereSql}",
                 IndexType::INDEX => "CREATE INDEX IF NOT EXISTS {$nameSql}_idx {$methodSql} "
                     . "ON {$tableName} {$columnsSql}{$includeSql}{$whereSql}",
