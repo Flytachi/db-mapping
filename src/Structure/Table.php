@@ -44,9 +44,9 @@ class Table implements StructureInterface
             $columnDefinitions[] = '  ' . $column->toSql($this->name, $dialect);
 
             foreach ($column->constraintsSql($this->name, $dialect) as $constraint) {
-                if ($dialect === 'pgsql' && str_starts_with($constraint, 'INDEX ')) {
-                    // отложим для отдельного CREATE INDEX
-                    $indexStatements[] = 'CREATE ' . $constraint . ';';
+                if (str_starts_with($constraint, 'CREATE ')) {
+                    // отложим для отдельного CREATE
+                    $indexStatements[] = $constraint . ';';
                 } else {
                     $constraints[] = '  ' . $constraint;
                 }
@@ -74,9 +74,9 @@ class Table implements StructureInterface
         }
 
         $body = implode(",\n", array_merge($columnDefinitions, $constraints));
-        $tableSql = sprintf("CREATE TABLE %s (\n%s\n);", $tableName, $body);
+        $tableSql = sprintf("CREATE TABLE IF NOT EXISTS %s (\n%s\n);", $tableName, $body);
 
-        if ($dialect === 'pgsql' && !empty($indexStatements)) {
+        if (!empty($indexStatements)) {
             $tableSql .= "\n" . implode("\n", $indexStatements);
         }
 

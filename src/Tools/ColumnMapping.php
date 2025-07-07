@@ -10,6 +10,7 @@ use Flytachi\DbMapping\Attributes\Constraint\Index;
 use Flytachi\DbMapping\Attributes\Constraint\Primary;
 use Flytachi\DbMapping\Attributes\Foreign;
 use Flytachi\DbMapping\Attributes\Primal\AttributeDbType;
+use Flytachi\DbMapping\Attributes\Sub\AttributeDbSubType;
 use Flytachi\DbMapping\Structure\Column;
 use Flytachi\DbMapping\Structure\ForeignKey;
 use ReflectionAttribute;
@@ -38,6 +39,8 @@ final class ColumnMapping
         $foreignKey = null;
         /** @var ?AttributeDbType $attributeType */
         $attributeType = null;
+        /** @var ?AttributeDbSubType $attributeTypeSub */
+        $attributeTypeSub = null;
 
         $types = $this->checkingType($property);
 
@@ -67,14 +70,27 @@ final class ColumnMapping
                 $indexes[] = $attributeObj->toObject($this->dialect);
             } elseif ($attributeObj instanceof Foreign) {
                 $foreignKey = $attributeObj->toObject($this->dialect);
+            } elseif ($attributeObj instanceof AttributeDbSubType) {
+                if (!$attributeObj->supports($types)) {
+                    throw new \InvalidArgumentException(
+                        $property->getName() . " in " . $property->getDeclaringClass()->getName() . " "
+                        . $attribute->getName()
+                        . " does not support this type: " . json_encode($types)
+                    );
+                };
+                $attributeTypeSub = $attributeObj;
             }
         }
 
+        $type = empty($attributeType)
+            ? Column::getPrimitiveSqlType($types, $this->dialect)
+            : $attributeType->toSql($this->dialect);
+
         return new Column(
             name: $property->getName(),
-            type: empty($attributeType)
-                ? Column::getPrimitiveSqlType($types, $this->dialect)
-                : $attributeType->toSql($this->dialect),
+            type: empty($attributeTypeSub)
+                ? $type
+                : $attributeTypeSub->toSql($type, $this->dialect),
             nullable: in_array('null', $types),
             default: ($property->hasDefaultValue()
                 ? ($property->isDefault()
@@ -84,6 +100,10 @@ final class ColumnMapping
                             : null,
                         'boolean' => $property->getDefaultValue() ? 'TRUE' : 'FALSE',
                         'string' => "'{$property->getDefaultValue()}'",
+                        'array' => match ($this->dialect) {
+                            'pgsql' => "'" . json_encode($property->getDefaultValue()) . "'::jsonb",
+                            'mysql' => "('" . json_encode($property->getDefaultValue()) . "')",
+                        },
                         default => "{$property->getDefaultValue()}"
                     }
                     : null

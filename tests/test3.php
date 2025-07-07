@@ -11,6 +11,7 @@ use Flytachi\DbMapping\Attributes\Primal\Decimal;
 use Flytachi\DbMapping\Attributes\Primal\Json;
 use Flytachi\DbMapping\Attributes\Primal\Timestamp;
 use Flytachi\DbMapping\Attributes\Primal\Varchar;
+use Flytachi\DbMapping\Attributes\Sub\AutoIncrement;
 use Flytachi\DbMapping\Structure\Table;
 use Flytachi\DbMapping\Tools\ColumnMapping;
 
@@ -18,10 +19,12 @@ use Flytachi\DbMapping\Tools\ColumnMapping;
 class ChargeTypeModel
 {
     #[Primary]
+    #[AutoIncrement]
+    #[BigInteger]
     public ?int $id = null;
 
     #[Json]
-    public array|string $name;
+    public array|string $name = [];
 
     #[Decimal]
     public int $cost = 0;
@@ -48,7 +51,6 @@ class TransactionModel
     #[Varchar(length: 700)]
     public array|string $description;
 
-    #[Unique]
     #[Varchar(length: 20)]
     public string $billing_code;
 
@@ -56,7 +58,7 @@ class TransactionModel
     public string $created_at;
 }
 
-
+$dialect = 'mysql';
 $dialect = 'pgsql';
 
 $reflectionClassModel = new ReflectionClass(ChargeTypeModel::class);
@@ -74,6 +76,11 @@ foreach ($reflectionClassModel->getProperties() as $property) {
 }
 $table = new Table('transactions', $columnMap->getColumns(), schema: 'public');
 $tb2 =  $table->toSql($dialect);
+
+print_r($tb1);
+echo PHP_EOL;
+print_r($tb2);
+echo PHP_EOL;
 
 dd(
     $tb1,

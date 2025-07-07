@@ -14,7 +14,7 @@ final class DebugDump
         $info = self::info();
         echo "\033[31m" . "[====================== DUMP and DIE ======================]\033[0m\n";
         echo "\033[31m" . ">---------------------------------------------------------- \033[0m\n";
-        foreach ($values as $value) {
+        foreach ($values as $key => $value) {
             echo match (gettype($value)) {
                 'NULL'               => "\033[37mnull",
                 'boolean'            => "\033[32m" . var_export($value, true),
@@ -24,6 +24,9 @@ final class DebugDump
                 default              => "\033[31m" . var_export($value, true)
             };
             echo "\033[0m\n";
+            if (isset($values[$key + 1])) {
+                echo "\033[31m" . ">- \033[0m\n";
+            }
         }
         echo "\033[31m" . ">---------------------------------------------------------- \033[0m\n";
         echo "\033[31m" . "[====================== DUMP and DIE ======================]\033[0m\n";
