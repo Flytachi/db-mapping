@@ -66,7 +66,7 @@ class Column implements StructureInterface
                     'pgsql' => 'REAL',
                     default => 'TEXT', // Fallback for unknown dialects
                 },
-                'string' => 'VARCHAR',
+                'string' => 'VARCHAR(255)',
                 default => 'TEXT',
             };
         } elseif (count($types) > 1) {
