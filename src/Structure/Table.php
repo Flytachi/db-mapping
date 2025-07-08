@@ -49,7 +49,10 @@ class Table implements StructureInterface
             $columnDefinitions[] = '  ' . $column->toSql($tableName, $dialect);
 
             foreach ($column->constraintsSql($tableName, $dialect) as $constraint) {
-                if (str_starts_with($constraint, 'CREATE ')) {
+                if (
+                    str_starts_with($constraint, 'CREATE ')
+                    || str_starts_with($constraint, 'ALTER TABLE')
+                ) {
                     // отложим для отдельного CREATE
                     $indexStatements[] = $constraint . ';';
                 } else {

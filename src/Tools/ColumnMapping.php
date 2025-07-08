@@ -11,6 +11,7 @@ use Flytachi\DbMapping\Attributes\Constraint\Primary;
 use Flytachi\DbMapping\Attributes\Foreign;
 use Flytachi\DbMapping\Attributes\Primal\AttributeDbType;
 use Flytachi\DbMapping\Attributes\Sub\AttributeDbSubType;
+use Flytachi\DbMapping\Attributes\Sub\AutoIncrement;
 use Flytachi\DbMapping\Structure\Column;
 use Flytachi\DbMapping\Structure\ForeignKey;
 use ReflectionAttribute;
@@ -64,13 +65,13 @@ final class ColumnMapping
                 $attributeType = $attributeObj;
             } elseif ($attributeObj instanceof AttributeDbConstraint) {
                 $attributeObj->columnPreparation($property->getName());
-                if ($attributeObj instanceof Primary) {
-                    $types = array_filter($types, fn($type) => $type !== 'null');
-                }
                 $indexes[] = $attributeObj->toObject($this->dialect);
             } elseif ($attributeObj instanceof Foreign) {
                 $foreignKey = $attributeObj->toObject($this->dialect);
             } elseif ($attributeObj instanceof AttributeDbSubType) {
+                if ($attributeObj::class === AutoIncrement::class) {
+                    $types = array_filter($types, fn($type) => $type !== 'null');
+                }
                 if (!$attributeObj->supports($types)) {
                     throw new \InvalidArgumentException(
                         $property->getName() . " in " . $property->getDeclaringClass()->getName() . " "

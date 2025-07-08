@@ -32,7 +32,9 @@ class ForeignKey implements StructureInterface
         $onDelete = "ON DELETE " . $this->onDelete->value;
         $onUpdate = "ON UPDATE " . $this->onUpdate->value;
 
-        return "CONSTRAINT {$constraintName} FOREIGN KEY ({$columnName})"
+//        return "CONSTRAINT {$constraintName} FOREIGN KEY ({$columnName})"
+//            . " REFERENCES {$this->referencedTable}({$this->referencedColumn}) {$onDelete} {$onUpdate}";
+        return "ALTER TABLE {$tableName} ADD CONSTRAINT {$constraintName} FOREIGN KEY ({$columnName})"
             . " REFERENCES {$this->referencedTable}({$this->referencedColumn}) {$onDelete} {$onUpdate}";
     }
 }
