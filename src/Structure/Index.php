@@ -32,8 +32,10 @@ class Index implements StructureInterface
         if ($dialect === 'mysql') {
             return match ($this->type) {
                 IndexType::PRIMARY => "PRIMARY KEY {$columnsSql}",
-                IndexType::UNIQUE => "CREATE UNIQUE INDEX {$nameSql}_udx {$columnsSql} USING {$this->method->value}",
-                IndexType::INDEX => "CREATE INDEX {$nameSql}_idx {$columnsSql} USING {$this->method->value}",
+                IndexType::UNIQUE => "CREATE UNIQUE INDEX {$nameSql}_udx ON {$tableName}"
+                    . " {$columnsSql}  USING {$this->method->value}",
+                IndexType::INDEX => "CREATE INDEX {$nameSql}_idx ON {$tableName}"
+                    . " {$columnsSql} USING {$this->method->value}",
             };
         }
 

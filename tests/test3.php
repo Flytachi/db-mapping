@@ -61,7 +61,7 @@ class TransactionModel
 }
 
 $dialect = 'mysql';
-$dialect = 'pgsql';
+//$dialect = 'pgsql';
 
 $reflectionClassModel = new ReflectionClass(ChargeTypeModel::class);
 $columnMap = new ColumnMapping($dialect);
