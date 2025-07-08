@@ -26,7 +26,8 @@ class Index implements StructureInterface
     {
         $columnsSql = '(' . implode(', ', array_map(fn($col) => $col, $this->columns)) . ')';
         $name = $this->name ?: implode('_', $this->columns);
-        $nameSql = "{$tableName}_{$name}";
+        $expName = explode('.', $tableName);
+        $nameSql = (count($expName) > 1 ? $expName[1] : "{$tableName}") . "_{$name}";
 
         if ($dialect === 'mysql') {
             return match ($this->type) {

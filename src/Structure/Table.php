@@ -33,17 +33,22 @@ class Table implements StructureInterface
         $this->foreignKeys = $foreignKeys;
     }
 
+    public function getFullName(): string
+    {
+        return $this->schema ? "{$this->schema}.{$this->name}" : $this->name;
+    }
+
     public function toSql(string $dialect = 'mysql'): string
     {
-        $tableName = $this->schema ? "{$this->schema}.{$this->name}" : $this->name;
+        $tableName = $this->getFullName();
         $columnDefinitions = [];
         $constraints = [];
         $indexStatements = [];
 
         foreach ($this->columns as $column) {
-            $columnDefinitions[] = '  ' . $column->toSql($this->name, $dialect);
+            $columnDefinitions[] = '  ' . $column->toSql($tableName, $dialect);
 
-            foreach ($column->constraintsSql($this->name, $dialect) as $constraint) {
+            foreach ($column->constraintsSql($tableName, $dialect) as $constraint) {
                 if (str_starts_with($constraint, 'CREATE ')) {
                     // отложим для отдельного CREATE
                     $indexStatements[] = $constraint . ';';
@@ -54,7 +59,7 @@ class Table implements StructureInterface
         }
 
         foreach ($this->indexes as $index) {
-            $sql = $index->toSql($this->name, $dialect);
+            $sql = $index->toSql($tableName, $dialect);
             if ($dialect === 'pgsql' && str_starts_with($sql, 'INDEX ')) {
                 $indexStatements[] = 'CREATE ' . $sql . ';';
             } else {
@@ -66,11 +71,11 @@ class Table implements StructureInterface
             // Assuming the ForeignKey object now holds the column name, it applies to
             // This requires a change in ForeignKey class or how it's used.
             // For now, let's assume ForeignKey has a property `columnName`
-            $constraints[] = '  ' . $foreignKey->toSql($this->name, $foreignKey->columnName, $dialect);
+            $constraints[] = '  ' . $foreignKey->toSql($tableName, $foreignKey->columnName, $dialect);
         }
 
         foreach ($this->checks as $check) {
-            $constraints[] = '  ' . $check->toSql($this->name, $dialect);
+            $constraints[] = '  ' . $check->toSql($tableName, $dialect);
         }
 
         $body = implode(",\n", array_merge($columnDefinitions, $constraints));
@@ -81,6 +86,18 @@ class Table implements StructureInterface
         }
 
         return $tableSql;
+    }
+
+    public function createSchemaIfNotExists(string $dialect = 'mysql'): ?string
+    {
+        if (empty($this->schema)) {
+            return null;
+        }
+
+        return match ($dialect) {
+            'pgsql' => "CREATE SCHEMA IF NOT EXISTS {$this->schema};",
+            default => null
+        };
     }
 
     public function addColumn(Column $column, string $dialect = 'mysql'): string

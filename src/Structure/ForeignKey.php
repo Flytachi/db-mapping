@@ -22,7 +22,13 @@ class ForeignKey implements StructureInterface
 
     public function toSql(string $tableName, string $columnName, string $dialect = 'mysql'): string
     {
-        $constraintName = $this->name ?: "fk_{$tableName}_{$columnName}";
+        if ($this->name) {
+            $constraintName = $this->name;
+        } else {
+            $expName = explode('.', $tableName);
+            $constraintName = (count($expName) > 1 ? "fk_" . $expName[1] : "fk_{$tableName}")
+                . "_{$columnName}";
+        }
         $onDelete = "ON DELETE " . $this->onDelete->value;
         $onUpdate = "ON UPDATE " . $this->onUpdate->value;
 

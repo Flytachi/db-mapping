@@ -17,7 +17,13 @@ class CheckConstraint implements StructureInterface
 
     public function toSql(string $tableName, string $dialect = 'mysql'): string
     {
-        $constraintName = $this->name ?: "chk_{$tableName}_" . md5($this->expression);
+        if ($this->name) {
+            $constraintName = $this->name;
+        } else {
+            $expName = explode('.', $tableName);
+            $constraintName = count($expName) > 1 ? "chk_" . $expName[1] . "_" : "chk_{$tableName}_";
+            $constraintName .= md5($this->expression);
+        }
         return "CONSTRAINT {$constraintName} CHECK ({$this->expression})";
     }
 }
