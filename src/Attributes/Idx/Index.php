@@ -12,8 +12,8 @@ use Flytachi\DbMapping\Constants\IndexType;
 class Index implements AttributeDbIdx
 {
     public function __construct(
-        private readonly ?string $name = null,
         private array $columns = [],
+        private readonly ?string $name = null,
         public IndexMethod $method = IndexMethod::BTREE,
     ) {
     }

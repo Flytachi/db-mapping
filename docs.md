@@ -55,17 +55,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Flytachi\DbMapping\Attributes\DbMap;
-use Flytachi\DbMapping\Attributes\Hybrid\Id;
-use Flytachi\DbMapping\Attributes\Primal\Varchar;
-use Flytachi\DbMapping\Attributes\Primal\Integer;
-use Flytachi\DbMapping\Attributes\Additive\DefaultVal;
-use Flytachi\DbMapping\Attributes\Additive\NullableIs;
-use Flytachi\DbMapping\Attributes\Idx\Unique;
-use Flytachi\DbMapping\Attributes\Constraint\ForeignKey;
-use Flytachi\DbMapping\Constants\FKAction;
+use Flytachi\DbMapping\Attributes\Additive\DefaultVal;use Flytachi\DbMapping\Attributes\Additive\NullableIs;use Flytachi\DbMapping\Attributes\Constraint\ForeignKey;use Flytachi\DbMapping\Attributes\Entity\Table;use Flytachi\DbMapping\Attributes\Hybrid\Id;use Flytachi\DbMapping\Attributes\Idx\Unique;use Flytachi\DbMapping\Attributes\Primal\Integer;use Flytachi\DbMapping\Attributes\Primal\Varchar;use Flytachi\DbMapping\Constants\FKAction;
 
-#[DbMap]
+#[Table]
 class User
 {
     #[Id]

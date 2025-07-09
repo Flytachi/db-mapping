@@ -12,8 +12,8 @@ use Flytachi\DbMapping\Constants\IndexType;
 class Unique implements AttributeDbIdx
 {
     public function __construct(
-        private readonly ?string $name = null,
         private array $columns = [],
+        private readonly ?string $name = null,
         public IndexMethod $method = IndexMethod::BTREE,
     ) {
     }
@@ -29,6 +29,7 @@ class Unique implements AttributeDbIdx
     {
         return new \Flytachi\DbMapping\Structure\Index(
             columns: $this->columns,
+            name: $this->name,
             type: IndexType::UNIQUE,
             method: IndexMethod::BTREE,
         );
