@@ -9,7 +9,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class AutoIncrement implements AttributeDbSubType
 {
-    public function supports(array $phpTypes): bool
+    public function supports(array &$phpTypes): bool
     {
         $phpTypes = array_filter($phpTypes, fn($type) => $type !== 'null');
         if (

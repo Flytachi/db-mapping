@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Flytachi\DbMapping\Attributes\Constraint;
 
 use Flytachi\DbMapping\Attributes\AttributeDb;
-use Flytachi\DbMapping\Structure\Index;
+use Flytachi\DbMapping\Structure\ForeignKey;
 
 interface AttributeDbConstraint extends AttributeDb
 {
-    public function columnPreparation(string $columnMain): void;
-    public function toObject(string $dialect = 'mysql'): Index;
+    public function toObject(string $dialect = 'mysql'): ForeignKey;
 }

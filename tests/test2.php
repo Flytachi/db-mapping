@@ -1,11 +1,6 @@
 <?php
 
-require 'vendor/autoload.php';
-
-
 use Flytachi\DbMapping\Constants\IndexType;
-use Flytachi\DbMapping\DbMappingBetta;
-use Flytachi\DbMapping\DbMappingInterface;
 use Flytachi\DbMapping\Structure\CheckConstraint;
 use Flytachi\DbMapping\Structure\Column;
 use Flytachi\DbMapping\Structure\ForeignKey;
@@ -15,9 +10,9 @@ use Flytachi\DbMapping\Structure\Table;
 use Flytachi\DbMapping\Structure\Trigger;
 use Flytachi\DbMapping\Structure\View;
 
+require 'vendor/autoload.php';
 
 $dialect = 'pgsql';
-$mapper = new DbMappingBetta($dialect);
 
 // 1. Test ALTER TABLE
 $table = new Table(
@@ -29,7 +24,7 @@ $table = new Table(
     indexes: [new Index(['id'], type: IndexType::PRIMARY)]
 );
 
-echo "\n-- 1. ALTER TABLE --\n";
+echo "\-- 1. ALTER TABLE --\n";
 echo $table->addColumn(new Column('email', 'VARCHAR(100)'), $dialect) . "\n";
 echo $table->dropColumn('name') . "\n";
 echo $table->addIndex(new Index(['email'], type: IndexType::UNIQUE), $dialect) . "\n";
@@ -43,7 +38,7 @@ $tableWithCheck = new Table(
     checks: [$checkConstraint]
 );
 echo "\n-- 2. CHECK constraint --\n";
-echo $mapper->getTableSql($tableWithCheck, $dialect) . "\n";
+echo $tableWithCheck->toSql($dialect) . "\n";
 
 // 3. Test PostgreSQL index with INCLUDE
 $indexWithInclude = new Index(['name'], type: IndexType::INDEX, includeColumns: ['email']);
@@ -53,16 +48,16 @@ $tableWithInclude = new Table(
     indexes: [$indexWithInclude]
 );
 echo "\n-- 3. PostgreSQL index with INCLUDE --\n";
-echo $mapper->getTableSql($tableWithInclude, $dialect) . "\n";
+echo $tableWithInclude->toSql($dialect) . "\n";
 
 // 4. Test VIEWS, STORED PROCEDURES, TRIGGERS
 $view = new View('my_view', 'SELECT id, name FROM test_table');
 $sp = new StoredProcedure('my_proc', 'UPDATE test_table SET name = \'test\' WHERE id = 1;');
 $trigger = new Trigger('my_trigger', 'test_table', 'INSERT', 'AFTER', 'my_proc');
 echo "\n-- 4. VIEWS, STORED PROCEDURES, TRIGGERS --\n";
-echo $mapper->getViewSql($view, $dialect) . "\n";
-echo $mapper->getStoredProcedureSql($sp, $dialect) . "\n";
-echo $mapper->getTriggerSql($trigger, $dialect) . "\n";
+echo $view->toSql($dialect) . "\n";
+echo $sp->toSql($dialect) . "\n";
+echo $trigger->toSql($dialect) . "\n";
 
 // 5. Test SCHEMAS
 $tableWithSchema = new Table(
@@ -71,8 +66,8 @@ $tableWithSchema = new Table(
     schema: 'my_schema'
 );
 echo "\n-- 5. SCHEMAS --\n";
-echo $mapper->createSchema('my_schema', $dialect) . "\n";
-echo $mapper->getTableSql($tableWithSchema, $dialect) . "\n";
+echo $tableWithSchema->createSchemaIfNotExists($dialect) . "\n";
+echo $tableWithSchema->toSql($dialect) . "\n";
 
 // 6. Test Name validation
 echo "\n-- 6. Name validation --\n";
@@ -82,18 +77,12 @@ try {
     echo "Caught expected exception: " . $e->getMessage() . "\n";
 }
 
-// 7. Test DbMappingInterface is implemented
-echo "\n-- 7. DbMappingInterface is implemented --\n";
-if ($mapper instanceof DbMappingInterface) {
-    echo "MyDbMapper implements DbMappingInterface\n";
-}
-
 // 8. Test improved ForeignKey handling
 $fk = new ForeignKey('users', 'id', name: 'fk_test_users');
 $tableWithFk = new Table(
     name: 'test_fk',
-    columns: [new Column('id', 'INT'), new Column('user_id', 'INT')],
-    foreignKeys: [$fk]
+    columns: [new Column('id', 'INT'), new Column('user_id', 'INT', foreignKey: $fk)],
+    foreignKeys: []
 );
 echo "\n-- 8. Improved ForeignKey handling --\n";
-echo $mapper->getTableSql($tableWithFk, $dialect) . "\n";
+echo $tableWithFk->toSql($dialect) . "\n";

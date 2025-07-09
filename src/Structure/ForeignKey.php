@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Flytachi\DbMapping\Structure;
 
-use Flytachi\DbMapping\Constants\ForeignKeyAction;
+use Flytachi\DbMapping\Constants\FKAction;
 
 class ForeignKey implements StructureInterface
 {
     public function __construct(
         public string $referencedTable,
         public string $referencedColumn,
-        public ForeignKeyAction $onUpdate = ForeignKeyAction::RESTRICT,
-        public ForeignKeyAction $onDelete = ForeignKeyAction::RESTRICT,
+        public FKAction $onUpdate = FKAction::RESTRICT,
+        public FKAction $onDelete = FKAction::RESTRICT,
         public ?string $name = null, // Add name property for the constraint
     ) {
         if ($name) {
@@ -32,8 +32,6 @@ class ForeignKey implements StructureInterface
         $onDelete = "ON DELETE " . $this->onDelete->value;
         $onUpdate = "ON UPDATE " . $this->onUpdate->value;
 
-//        return "CONSTRAINT {$constraintName} FOREIGN KEY ({$columnName})"
-//            . " REFERENCES {$this->referencedTable}({$this->referencedColumn}) {$onDelete} {$onUpdate}";
         return "ALTER TABLE {$tableName} ADD CONSTRAINT {$constraintName} FOREIGN KEY ({$columnName})"
             . " REFERENCES {$this->referencedTable}({$this->referencedColumn}) {$onDelete} {$onUpdate}";
     }

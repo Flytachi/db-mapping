@@ -2,16 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Flytachi\DbMapping\Attributes\Constraint;
+namespace Flytachi\DbMapping\Attributes\Idx;
 
 use Attribute;
 use Flytachi\DbMapping\Constants\IndexMethod;
 use Flytachi\DbMapping\Constants\IndexType;
 
-#[Attribute(Attribute::TARGET_PROPERTY)]
-class Primary implements AttributeDbConstraint
+#[Attribute(Attribute::TARGET_PROPERTY | Attribute::IS_REPEATABLE)]
+class Unique implements AttributeDbIdx
 {
-    private array $columns = [];
+    public function __construct(
+        private readonly ?string $name = null,
+        private array $columns = [],
+        public IndexMethod $method = IndexMethod::BTREE,
+    ) {
+    }
 
     public function columnPreparation(string $columnMain): void
     {
@@ -24,7 +29,7 @@ class Primary implements AttributeDbConstraint
     {
         return new \Flytachi\DbMapping\Structure\Index(
             columns: $this->columns,
-            type: IndexType::PRIMARY,
+            type: IndexType::UNIQUE,
             method: IndexMethod::BTREE,
         );
     }

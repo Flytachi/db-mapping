@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Flytachi\DbMapping\Constants;
 
-enum ForeignKeyAction: string
+enum FKAction: string
 {
     case RESTRICT = 'RESTRICT';
     case NO_ACTION = 'NO ACTION';

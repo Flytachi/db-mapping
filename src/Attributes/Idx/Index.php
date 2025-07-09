@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Flytachi\DbMapping\Attributes\Constraint;
+namespace Flytachi\DbMapping\Attributes\Idx;
 
 use Attribute;
 use Flytachi\DbMapping\Constants\IndexMethod;
 use Flytachi\DbMapping\Constants\IndexType;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::IS_REPEATABLE)]
-class Index implements AttributeDbConstraint
+class Index implements AttributeDbIdx
 {
     public function __construct(
         private readonly ?string $name = null,

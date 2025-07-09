@@ -1,6 +1,6 @@
 <?php
 
-use Flytachi\DbMapping\Constants\ForeignKeyAction;
+use Flytachi\DbMapping\Constants\FKAction;
 use Flytachi\DbMapping\Constants\IndexType;
 use Flytachi\DbMapping\Structure\Column;
 use Flytachi\DbMapping\Structure\ForeignKey;
@@ -48,7 +48,7 @@ $table2 = new Table(
 $table2->columns[1]->foreignKey = new ForeignKey(
     referencedTable: 'users',
     referencedColumn: 'id',
-    onDelete: ForeignKeyAction::CASCADE
+    onDelete: FKAction::CASCADE
 );
 
 // TAGS
@@ -75,8 +75,8 @@ $table4 = new Table(
         new Index(['post_id', 'tag_id'], type: IndexType::PRIMARY),
     ]
 );
-$table4->columns[0]->foreignKey = new ForeignKey('posts', 'id', ForeignKeyAction::CASCADE);
-$table4->columns[1]->foreignKey = new ForeignKey('tags', 'id', ForeignKeyAction::CASCADE);
+$table4->columns[0]->foreignKey = new ForeignKey('posts', 'id', FKAction::CASCADE);
+$table4->columns[1]->foreignKey = new ForeignKey('tags', 'id', FKAction::CASCADE);
 
 echo $table1->toSql($dialect) . "\n\n";
 echo $table2->toSql($dialect) . "\n\n";
