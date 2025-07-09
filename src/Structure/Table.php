@@ -81,6 +81,7 @@ class Table implements StructureInterface
             $constraints[] = '  ' . $check->toSql($tableName, $dialect);
         }
 
+        $constraints = $this->mergePrimaryKeys($constraints);
         $body = implode(",\n", array_merge($columnDefinitions, $constraints));
         $tableSql = sprintf("CREATE TABLE IF NOT EXISTS %s (\n%s\n);", $tableName, $body);
 
@@ -89,6 +90,28 @@ class Table implements StructureInterface
         }
 
         return $tableSql;
+    }
+
+    private function mergePrimaryKeys(array $constraints): array
+    {
+        $primaryColumns = [];
+        $otherConstraints = [];
+
+        foreach ($constraints as $line) {
+            if (preg_match('/PRIMARY KEY\s*\((.*?)\)/i', $line, $matches)) {
+                $columns = array_map('trim', explode(',', $matches[1]));
+                $primaryColumns = array_merge($primaryColumns, $columns);
+            } else {
+                $otherConstraints[] = $line;
+            }
+        }
+
+        if (!empty($primaryColumns)) {
+            $primaryLine = '  PRIMARY KEY (' . implode(', ', array_unique($primaryColumns)) . ')';
+            array_unshift($otherConstraints, $primaryLine);
+        }
+
+        return $otherConstraints;
     }
 
     public function createSchemaIfNotExists(string $dialect = 'mysql'): ?string
