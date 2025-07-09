@@ -128,5 +128,3 @@ CREATE TABLE IF NOT EXISTS users (
 ## Контакты
 
 По вопросам и предложениям обращайтесь к автору: jasur.rakhmatov03@gmail.com
-
-

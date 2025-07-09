@@ -278,5 +278,3 @@ composer require flytachi/db-mapping
 ## Контакты
 
 По вопросам и предложениям обращайтесь к автору: jasur.rakhmatov03@gmail.com
-
-

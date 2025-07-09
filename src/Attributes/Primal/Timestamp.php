@@ -7,22 +7,30 @@ namespace Flytachi\DbMapping\Attributes\Primal;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class Timestamp implements AttributeDbType
+readonly class Timestamp extends DateTime implements AttributeDbType
 {
-    public function supports(array $phpTypes): bool
-    {
-        $phpTypes = array_filter($phpTypes, fn($type) => $type !== 'null');
-        if (
-            count($phpTypes) === 1
-            && in_array($phpTypes[0], ['mixed', 'string'])
-        ) {
-            return true;
-        }
-        return false;
+    /**
+     * @param bool $withTimeZone If true, the timestamp will
+     * include time zone information. Otherwise, it will be without time zone.
+     */
+    public function __construct(
+        private bool $withTimeZone = true
+    ) {
     }
 
     public function toSql(string $dialect = 'mysql'): string
     {
-        return 'TIMESTAMP';
+        if ($this->withTimeZone) {
+            return match ($dialect) {
+                'pgsql' => "TIMESTAMP WITH TIME ZONE",
+                'sqlite' => "DATETIME",
+                default => "TIMESTAMP",
+            };
+        } else {
+            return match ($dialect) {
+                'pgsql' => "TIMESTAMP WITHOUT TIME ZONE",
+                default => "DATETIME",
+            };
+        }
     }
 }

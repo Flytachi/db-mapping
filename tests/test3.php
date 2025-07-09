@@ -1,11 +1,12 @@
 <?php
 
 use Flytachi\DbMapping\Attributes\Additive\NullableIs;
-use Flytachi\DbMapping\Attributes\Constraint\ForeignKey;
 use Flytachi\DbMapping\Attributes\Constraint\ForeignRepo;
 use Flytachi\DbMapping\Attributes\Idx\Index;
 use Flytachi\DbMapping\Attributes\Idx\Primary;
 use Flytachi\DbMapping\Attributes\Idx\Unique;
+use Flytachi\DbMapping\Attributes\Primal\Betta\Blob;
+use Flytachi\DbMapping\Attributes\Primal\Betta\EnumType;
 use Flytachi\DbMapping\Attributes\Primal\BigInteger;
 use Flytachi\DbMapping\Attributes\Primal\Boolean;
 use Flytachi\DbMapping\Attributes\Primal\Decimal;
@@ -30,6 +31,13 @@ class Repo implements DbMapRepoInterface
     {
         return 'id';
     }
+}
+
+enum Status: int
+{
+    case CONFIRMED = 1;
+    case PENDING = 2;
+    case CANCELLED = 3;
 }
 
 class ChargeTypeModel
@@ -76,10 +84,16 @@ class TransactionModel
 
     #[Timestamp]
     public string $created_at;
+
+    #[EnumType(Status::class)]
+    public int $status;
+
+    #[Blob('longs')]
+    public string $cre;
 }
 
 $dialect = 'mysql';
-//$dialect = 'pgsql';
+$dialect = 'pgsql';
 
 $schema = 'public';
 if ($dialect === 'mysql') {

@@ -9,6 +9,9 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 readonly class Varchar implements AttributeDbType
 {
+    /**
+     * @param int $length The maximum length of the VARCHAR string. Defaults to 255.
+     */
     public function __construct(
         private int $length = 255,
     ) {

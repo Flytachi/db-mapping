@@ -9,6 +9,9 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 readonly class Type implements AttributeDbType
 {
+    /**
+     * @param string $definition The SQL type definition string (e.g., 'VARCHAR(255)', 'INT', 'TEXT').
+     */
     public function __construct(
         private string $definition,
     ) {
