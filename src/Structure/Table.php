@@ -173,7 +173,7 @@ class Table implements StructureInterface
     {
         $this->foreignKeys[] = $foreignKey;
         $tableName = $this->schema ? "{$this->schema}.{$this->name}" : $this->name;
-        return sprintf("ALTER TABLE %s ADD %s;", $tableName, $foreignKey->toSql($this->name, $foreignKey->columnName, $dialect));
+        return sprintf("ALTER TABLE %s ADD %s;", $tableName, $foreignKey->toSql($this->name, $foreignKey->referencedColumn, $dialect));
     }
 
     public function dropForeignKey(string $constraintName, string $dialect = 'mysql'): string

@@ -7,7 +7,7 @@ namespace Flytachi\DbMapping\Attributes\Additive;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class NullableIs implements AttributeDbAdditive
+class NullableIs implements AttributeDbAdditive
 {
     public function __construct(
         private bool $isNullable = true,

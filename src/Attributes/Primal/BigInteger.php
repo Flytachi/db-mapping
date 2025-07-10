@@ -7,7 +7,7 @@ namespace Flytachi\DbMapping\Attributes\Primal;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class BigInteger implements AttributeDbType
+class BigInteger implements AttributeDbType
 {
     public function supports(array $phpTypes): bool
     {

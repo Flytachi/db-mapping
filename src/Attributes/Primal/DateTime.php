@@ -7,7 +7,7 @@ namespace Flytachi\DbMapping\Attributes\Primal;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class DateTime implements AttributeDbType
+class DateTime implements AttributeDbType
 {
     final public function supports(array $phpTypes): bool
     {
