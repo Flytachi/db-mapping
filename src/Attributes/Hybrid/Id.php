@@ -12,7 +12,7 @@ use Flytachi\DbMapping\Attributes\Sub\AutoIncrement;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Id implements AttributeDbHybrid
 {
-    public function getInstances(): array
+    public function getInstances(string $dialect = 'mysql'): array
     {
         return [
             new Primary(),

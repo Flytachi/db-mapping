@@ -14,6 +14,7 @@ class Column implements StructureInterface
         /** @var Index[] */
         public array $indexes = [],
         public ?ForeignKey $foreignKey = null,
+        public ?CheckConstraint $checkConstraint = null,
     ) {
         NameValidator::validate($name);
     }
@@ -44,6 +45,10 @@ class Column implements StructureInterface
 
         if ($this->foreignKey) {
             $result[] = $this->foreignKey->toSql($tableName, $this->name, $dialect);
+        }
+
+        if ($this->checkConstraint) {
+            $result[] = $this->checkConstraint->toSql($tableName, $dialect);
         }
 
         return $result;

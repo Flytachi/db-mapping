@@ -13,7 +13,8 @@ use Flytachi\DbMapping\Attributes\Sub\AttributeDbSubType;
 interface AttributeDbHybrid extends AttributeDb
 {
     /**
+     * @param string $dialect
      * @return array<AttributeDbType|AttributeDbSubType|AttributeDbIdx|AttributeDbAdditive>
      */
-    public function getInstances(): array;
+    public function getInstances(string $dialect = 'mysql'): array;
 }

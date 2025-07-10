@@ -2,21 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Flytachi\DbMapping\Attributes\Primal\Betta;
+namespace Flytachi\DbMapping\Attributes\Primal;
 
 use Attribute;
-use Flytachi\DbMapping\Attributes\Primal\AttributeDbType;
-use InvalidArgumentException;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class Binary implements AttributeDbType
+readonly class UuidBase implements AttributeDbType
 {
     public function __construct(
-        private int $length = 255
+        private bool $asBinary = false
     ) {
-        if ($this->length <= 0) {
-            throw new InvalidArgumentException('Binary length must be a positive integer.');
-        }
     }
 
     public function supports(array $phpTypes): bool
@@ -34,9 +29,10 @@ readonly class Binary implements AttributeDbType
     public function toSql(string $dialect = 'mysql'): string
     {
         return match ($dialect) {
-            'pgsql' => "BYTEA",
-            'sqlite' => "BLOB",
-            default => "VARBINARY({$this->length})",
+            'mysql' => $this->asBinary ? "BINARY(16)" : "CHAR(36)",
+            'pgsql' => "UUID",
+            'sqlite' => "TEXT",
+            default => "CHAR(36)",
         };
     }
 }

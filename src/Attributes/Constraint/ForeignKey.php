@@ -8,7 +8,7 @@ use Attribute;
 use Flytachi\DbMapping\Constants\FKAction;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class ForeignKey implements AttributeDbConstraint
+class ForeignKey implements AttributeDbConstraintForeign
 {
     public function __construct(
         public string $referencedTable,
@@ -19,7 +19,7 @@ class ForeignKey implements AttributeDbConstraint
     ) {
     }
 
-    public function toObject(string $dialect = 'mysql'): \Flytachi\DbMapping\Structure\ForeignKey
+    public function toObject(string $columnName, string $dialect = 'mysql'): \Flytachi\DbMapping\Structure\ForeignKey
     {
         return new \Flytachi\DbMapping\Structure\ForeignKey(
             referencedTable: $this->referencedTable,

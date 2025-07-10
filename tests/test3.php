@@ -2,12 +2,12 @@
 
 use Flytachi\DbMapping\Attributes\Additive\NullableIs;
 use Flytachi\DbMapping\Attributes\Constraint\ForeignRepo;
+use Flytachi\DbMapping\Attributes\Hybrid\Uuid;
 use Flytachi\DbMapping\Attributes\Idx\Index;
 use Flytachi\DbMapping\Attributes\Idx\Primary;
 use Flytachi\DbMapping\Attributes\Idx\Unique;
-use Flytachi\DbMapping\Attributes\Primal\Betta\Blob;
-use Flytachi\DbMapping\Attributes\Primal\Betta\EnumType;
 use Flytachi\DbMapping\Attributes\Primal\BigInteger;
+use Flytachi\DbMapping\Attributes\Primal\Blob;
 use Flytachi\DbMapping\Attributes\Primal\Boolean;
 use Flytachi\DbMapping\Attributes\Primal\Decimal;
 use Flytachi\DbMapping\Attributes\Primal\Json;
@@ -67,8 +67,8 @@ class ChargeTypeModel
 
 class TransactionModel
 {
-    #[Primary]
-    public string $id;
+    #[Uuid]
+    public ?string $id = null;
 
     #[ForeignRepo(Repo::class)]
     public int $charge_type_id;
@@ -85,15 +85,15 @@ class TransactionModel
     #[Timestamp]
     public string $created_at;
 
-    #[EnumType(Status::class)]
+    #[\Flytachi\DbMapping\Attributes\Constraint\CheckEnum(Status::class)]
     public int $status;
 
-    #[Blob('longs')]
+    #[Blob('long')]
     public string $cre;
 }
 
 $dialect = 'mysql';
-$dialect = 'pgsql';
+//$dialect = 'pgsql';
 
 $schema = 'public';
 if ($dialect === 'mysql') {

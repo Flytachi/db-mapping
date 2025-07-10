@@ -1,9 +1,10 @@
 <?php
 
-namespace Flytachi\DbMapping\Attributes\Primal\Betta;
+declare(strict_types=1);
+
+namespace Flytachi\DbMapping\Attributes\Primal;
 
 use Attribute;
-use Flytachi\DbMapping\Attributes\Primal\AttributeDbType;
 use InvalidArgumentException;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]

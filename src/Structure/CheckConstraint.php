@@ -24,6 +24,6 @@ class CheckConstraint implements StructureInterface
             $constraintName = count($expName) > 1 ? "chk_" . $expName[1] . "_" : "chk_{$tableName}_";
             $constraintName .= md5($this->expression);
         }
-        return "CONSTRAINT {$constraintName} CHECK ({$this->expression})";
+        return "ALTER TABLE {$tableName} ADD CONSTRAINT {$constraintName} CHECK ({$this->expression})";
     }
 }

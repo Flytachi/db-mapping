@@ -7,11 +7,15 @@ namespace Flytachi\DbMapping\Tools;
 use Flytachi\DbMapping\Attributes\Additive\AttributeDbAdditive;
 use Flytachi\DbMapping\Attributes\AttributeDb;
 use Flytachi\DbMapping\Attributes\Constraint\AttributeDbConstraint;
+use Flytachi\DbMapping\Attributes\Constraint\AttributeDbConstraintCheck;
+use Flytachi\DbMapping\Attributes\Constraint\AttributeDbConstraintForeign;
+use Flytachi\DbMapping\Attributes\Constraint\Check;
 use Flytachi\DbMapping\Attributes\Hybrid\AttributeDbHybrid;
 use Flytachi\DbMapping\Attributes\Idx\AttributeDbIdx;
 use Flytachi\DbMapping\Attributes\Idx\Index;
 use Flytachi\DbMapping\Attributes\Primal\AttributeDbType;
 use Flytachi\DbMapping\Attributes\Sub\AttributeDbSubType;
+use Flytachi\DbMapping\Structure\CheckConstraint;
 use Flytachi\DbMapping\Structure\Column;
 use Flytachi\DbMapping\Structure\ForeignKey;
 use ReflectionAttribute;
@@ -42,6 +46,8 @@ final class ColumnMapping
         $indexes = [];
         /** @var ?ForeignKey $foreignKey */
         $foreignKey = null;
+        /** @var ?CheckConstraint $checkConstraint */
+        $checkConstraint = null;
 
         $types = $this->checkingType($property);
         $nullable = null;
@@ -57,6 +63,7 @@ final class ColumnMapping
                 attributeTypeSub: $attributeTypeSub,
                 indexes: $indexes,
                 foreignKey: $foreignKey,
+                checkConstraint: $checkConstraint,
                 types: $types,
                 nullable: $nullable,
                 default: $default,
@@ -95,7 +102,8 @@ final class ColumnMapping
             nullable: $nullable,
             default: $default,
             indexes: $indexes,
-            foreignKey: $foreignKey
+            foreignKey: $foreignKey,
+            checkConstraint: $checkConstraint
         );
     }
 
@@ -107,12 +115,13 @@ final class ColumnMapping
         ?AttributeDbSubType &$attributeTypeSub,
         array &$indexes,
         ?ForeignKey &$foreignKey,
+        ?CheckConstraint &$checkConstraint,
         array &$types,
         ?bool &$nullable,
         ?string &$default,
     ): void {
         if ($instance instanceof AttributeDbHybrid) {
-            foreach ($instance->getInstances() as $subInstance) {
+            foreach ($instance->getInstances($this->dialect) as $subInstance) {
                 $this->prepareInstance(
                     property: $property,
                     attribute: $attribute,
@@ -121,6 +130,7 @@ final class ColumnMapping
                     attributeTypeSub: $attributeTypeSub,
                     indexes: $indexes,
                     foreignKey: $foreignKey,
+                    checkConstraint: $checkConstraint,
                     types: $types,
                     nullable: $nullable,
                     default: $default,
@@ -155,7 +165,11 @@ final class ColumnMapping
             $instance->columnPreparation($property->getName());
             $indexes[] = $instance->toObject($this->dialect);
         } elseif ($instance instanceof AttributeDbConstraint) {
-            $foreignKey = $instance->toObject($this->dialect);
+            if ($instance instanceof AttributeDbConstraintForeign) {
+                $foreignKey = $instance->toObject($property->getName(), $this->dialect);
+            } elseif ($instance instanceof AttributeDbConstraintCheck) {
+                $checkConstraint = $instance->toObject($property->getName(), $this->dialect);
+            }
         } elseif ($instance instanceof AttributeDbAdditive) {
             $instance->preparation($nullable, $default);
         }

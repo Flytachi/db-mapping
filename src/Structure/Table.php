@@ -42,8 +42,8 @@ class Table implements StructureInterface
     {
         $tableName = $this->getFullName();
         $columnDefinitions = [];
-        $constraints = [];
-        $indexStatements = [];
+        $internalStatements = [];
+        $externalStatements = [];
 
         foreach ($this->columns as $column) {
             $columnDefinitions[] = '  ' . $column->toSql($tableName, $dialect);
@@ -53,10 +53,9 @@ class Table implements StructureInterface
                     str_starts_with($constraint, 'CREATE ')
                     || str_starts_with($constraint, 'ALTER TABLE')
                 ) {
-                    // отложим для отдельного CREATE
-                    $indexStatements[] = $constraint . ';';
+                    $externalStatements[] = $constraint . ';';
                 } else {
-                    $constraints[] = '  ' . $constraint;
+                    $internalStatements[] = '  ' . $constraint;
                 }
             }
         }
@@ -64,29 +63,34 @@ class Table implements StructureInterface
         foreach ($this->indexes as $index) {
             $sql = $index->toSql($tableName, $dialect);
             if ($dialect === 'pgsql' && str_starts_with($sql, 'INDEX ')) {
-                $indexStatements[] = 'CREATE ' . $sql . ';';
+                $externalStatements[] = 'CREATE ' . $sql . ';';
             } else {
-                $constraints[] = '  ' . $sql;
+                $internalStatements[] = '  ' . $sql;
             }
         }
 
         foreach ($this->foreignKeys as $foreignKey) {
-            // Assuming the ForeignKey object now holds the column name, it applies to
-            // This requires a change in ForeignKey class or how it's used.
-            // For now, let's assume ForeignKey has a property `columnName`
-            $constraints[] = '  ' . $foreignKey->toSql($tableName, $foreignKey->columnName, $dialect);
+            $internalStatements[] = '  ' . $foreignKey->toSql($tableName, $foreignKey->columnName, $dialect);
         }
 
         foreach ($this->checks as $check) {
-            $constraints[] = '  ' . $check->toSql($tableName, $dialect);
+            $sql = $check->toSql($tableName, $dialect);
+            if (
+                str_starts_with($sql, 'CREATE ')
+                || str_starts_with($sql, 'ALTER TABLE')
+            ) {
+                $externalStatements[] = $sql . ';';
+            } else {
+                $internalStatements[] = '  ' . $sql;
+            }
         }
 
-        $constraints = $this->mergePrimaryKeys($constraints);
-        $body = implode(",\n", array_merge($columnDefinitions, $constraints));
+        $internalStatements = $this->mergePrimaryKeys($internalStatements);
+        $body = implode(",\n", array_merge($columnDefinitions, $internalStatements));
         $tableSql = sprintf("CREATE TABLE IF NOT EXISTS %s (\n%s\n);", $tableName, $body);
 
-        if (!empty($indexStatements)) {
-            $tableSql .= "\n" . implode("\n", $indexStatements);
+        if (!empty($externalStatements)) {
+            $tableSql .= "\n" . implode("\n", $externalStatements);
         }
 
         return $tableSql;

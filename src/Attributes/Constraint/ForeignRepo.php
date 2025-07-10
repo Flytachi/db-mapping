@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Flytachi\DbMapping\Attributes\Constraint;
 
-use AllowDynamicProperties;
 use Attribute;
 use Flytachi\DbMapping\Constants\FKAction;
 use Flytachi\DbMapping\DbMapRepoInterface;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class ForeignRepo implements AttributeDbConstraint
+class ForeignRepo implements AttributeDbConstraintForeign
 {
     /**
      * @param class-string<DbMapRepoInterface> $referencedRepoClass
@@ -26,7 +25,7 @@ class ForeignRepo implements AttributeDbConstraint
     ) {
     }
 
-    public function toObject(string $dialect = 'mysql'): \Flytachi\DbMapping\Structure\ForeignKey
+    public function toObject(string $columnName, string $dialect = 'mysql'): \Flytachi\DbMapping\Structure\ForeignKey
     {
         $referencedRepoInstance = new $this->referencedRepoClass();
 
