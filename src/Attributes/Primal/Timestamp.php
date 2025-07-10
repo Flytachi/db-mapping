@@ -14,7 +14,7 @@ readonly class Timestamp extends DateTime implements AttributeDbType
      * include time zone information. Otherwise, it will be without time zone.
      */
     public function __construct(
-        private bool $withTimeZone = true
+        private readonly bool $withTimeZone = true
     ) {
     }
 

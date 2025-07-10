@@ -10,7 +10,7 @@ use Flytachi\DbMapping\Structure\CheckConstraint;
 use InvalidArgumentException;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class CheckEnum implements AttributeDbConstraintCheck
+readonly class CheckEnum implements AttributeDbConstraintCheck
 {
     /**
      * @param class-string<BackedEnum> $enumClassName

@@ -7,7 +7,7 @@ namespace Flytachi\DbMapping\Attributes\Sub;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class AutoIncrement implements AttributeDbSubType
+readonly class AutoIncrement implements AttributeDbSubType
 {
     public function supports(array &$phpTypes): bool
     {

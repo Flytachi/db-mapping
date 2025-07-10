@@ -8,7 +8,7 @@ use Attribute;
 use Flytachi\DbMapping\Constants\FKAction;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class ForeignKey implements AttributeDbConstraintForeign
+readonly class ForeignKey implements AttributeDbConstraintForeign
 {
     public function __construct(
         public string $referencedTable,

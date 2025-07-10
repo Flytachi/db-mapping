@@ -8,7 +8,7 @@ use Attribute;
 use Flytachi\DbMapping\Structure\CheckConstraint;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_CLASS)]
-class Check implements AttributeDbConstraintCheck
+readonly class Check implements AttributeDbConstraintCheck
 {
     public function __construct(
         public string $expression,

@@ -7,7 +7,7 @@ namespace Flytachi\DbMapping\Attributes\Additive;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class DefaultVal implements AttributeDbAdditive
+readonly class DefaultVal implements AttributeDbAdditive
 {
     public function __construct(
         private string $definition,

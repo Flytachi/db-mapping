@@ -7,7 +7,7 @@ namespace Flytachi\DbMapping\Attributes\Primal;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class Integer implements AttributeDbType
+readonly class Integer implements AttributeDbType
 {
     public function supports(array $phpTypes): bool
     {

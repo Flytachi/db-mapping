@@ -3,7 +3,7 @@
     "description": "Database Mapping",
     "type": "library",
     "license": "MIT",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "keywords": ["db mapping", "mapping", "db"],
     "autoload": {
         "psr-4": {
@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": ">=8.1"
+        "php": ">=8.3"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "@stable"

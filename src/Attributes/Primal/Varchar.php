@@ -7,7 +7,7 @@ namespace Flytachi\DbMapping\Attributes\Primal;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class Varchar implements AttributeDbType
+readonly class Varchar implements AttributeDbType
 {
     /**
      * @param int $length The maximum length of the VARCHAR string. Defaults to 255.

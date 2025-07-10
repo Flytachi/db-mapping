@@ -11,7 +11,7 @@ use Flytachi\DbMapping\Attributes\Idx\Primary;
 use Flytachi\DbMapping\Attributes\Primal\UuidBase;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class Uuid implements AttributeDbHybrid
+readonly class Uuid implements AttributeDbHybrid
 {
     public function getInstances(string $dialect = 'mysql'): array
     {

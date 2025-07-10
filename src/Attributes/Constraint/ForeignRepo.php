@@ -9,7 +9,7 @@ use Flytachi\DbMapping\Constants\FKAction;
 use Flytachi\DbMapping\DbMapRepoInterface;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class ForeignRepo implements AttributeDbConstraintForeign
+readonly class ForeignRepo implements AttributeDbConstraintForeign
 {
     /**
      * @param class-string<DbMapRepoInterface> $referencedRepoClass

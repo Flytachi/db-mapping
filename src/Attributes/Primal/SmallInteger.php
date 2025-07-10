@@ -7,7 +7,7 @@ namespace Flytachi\DbMapping\Attributes\Primal;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class SmallInteger implements AttributeDbType
+readonly class SmallInteger implements AttributeDbType
 {
     public function supports(array $phpTypes): bool
     {

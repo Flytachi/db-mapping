@@ -10,7 +10,7 @@ use Flytachi\DbMapping\Attributes\Primal\BigInteger;
 use Flytachi\DbMapping\Attributes\Sub\AutoIncrement;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class BigId implements AttributeDbHybrid
+readonly class BigId implements AttributeDbHybrid
 {
     public function getInstances(string $dialect = 'mysql'): array
     {

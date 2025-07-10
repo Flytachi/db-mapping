@@ -10,7 +10,7 @@ use Flytachi\DbMapping\Attributes\Primal\Integer;
 use Flytachi\DbMapping\Attributes\Sub\AutoIncrement;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class Id implements AttributeDbHybrid
+readonly class Id implements AttributeDbHybrid
 {
     public function getInstances(string $dialect = 'mysql'): array
     {
