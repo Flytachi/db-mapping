@@ -21,7 +21,7 @@ class Index implements AttributeDbIdx
     public function columnPreparation(string $columnMain): void
     {
         if (!in_array($columnMain, $this->columns)) {
-            $this->columns[] = $columnMain;
+            array_unshift($this->columns, $columnMain);
         }
     }
 
