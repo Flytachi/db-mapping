@@ -87,7 +87,7 @@ class Table implements StructureInterface
 
         $internalStatements = $this->mergePrimaryKeys($internalStatements);
         $body = implode(",\n", array_merge($columnDefinitions, $internalStatements));
-        $tableSql = sprintf("CREATE TABLE IF NOT EXISTS %s (\n%s\n);", $tableName, $body);
+        $tableSql = sprintf("CREATE TABLE %s (\n%s\n);", $tableName, $body);
 
         if (!empty($externalStatements)) {
             $tableSql .= "\n" . implode("\n", $externalStatements);
@@ -125,7 +125,7 @@ class Table implements StructureInterface
         }
 
         return match ($dialect) {
-            'pgsql' => "CREATE SCHEMA IF NOT EXISTS {$this->schema};",
+            'pgsql' => "CREATE SCHEMA {$this->schema};",
             default => null
         };
     }

@@ -48,9 +48,9 @@ class Index implements StructureInterface
 
             return match ($this->type) {
                 IndexType::PRIMARY => "PRIMARY KEY {$columnsSql}",
-                IndexType::UNIQUE => "CREATE UNIQUE INDEX IF NOT EXISTS {$nameSql}_udx {$methodSql} "
+                IndexType::UNIQUE => "CREATE UNIQUE INDEX {$nameSql}_udx {$methodSql} "
                     . "ON {$tableName} {$columnsSql}{$includeSql}{$whereSql}",
-                IndexType::INDEX => "CREATE INDEX IF NOT EXISTS {$nameSql}_idx {$methodSql} "
+                IndexType::INDEX => "CREATE INDEX {$nameSql}_idx {$methodSql} "
                     . "ON {$tableName} {$columnsSql}{$includeSql}{$whereSql}",
             };
         }

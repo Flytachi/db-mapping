@@ -116,7 +116,7 @@ class User
 /*
 Пример вывода SQL:
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE users (
   id INT NOT NULL,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
