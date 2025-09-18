@@ -24,23 +24,39 @@ class Index implements StructureInterface
 
     public function toSql(string $tableName, string $dialect = 'mysql'): string
     {
-        $columnsSql = '(' . implode(', ', array_map(fn($col) => $col, $this->columns)) . ')';
-        $name = $this->name ?: implode('_', $this->columns);
-        $expName = explode('.', $tableName);
-        $nameSql = (count($expName) > 1 ? $expName[1] : "{$tableName}") . "_{$name}";
+        $columnsSql = ' (' . implode(', ', array_map(fn($col) => $col, $this->columns)) . ')';
+        $baseName = $this->name;
+        if (!$baseName) {
+            $cleanColumns = array_map(fn($col) => preg_replace('/[^a-zA-Z0-9_]/', '', $col), $this->columns);
+            $baseName = implode('_', $cleanColumns);
+        }
+
+        $cleanTableName = str_replace(['"', '`'], '', basename(str_replace('.', '/', $tableName)));
+
+        $suffix = match ($this->type) {
+            IndexType::PRIMARY => '_pkey',
+            IndexType::UNIQUE => '_udx',
+            IndexType::INDEX => '_idx',
+        };
+        $nameSql = "{$cleanTableName}_{$baseName}{$suffix}";
+
+        $limit = $dialect === 'pgsql' ? 63 : 64;
+        if (strlen($nameSql) > $limit) {
+            $nameSql = substr($nameSql, 0, $limit - 5) . '_' . hash('crc32b', $nameSql);
+        }
 
         if ($dialect === 'mysql') {
+            $methodSql = $this->method !== IndexMethod::BTREE ? " USING {$this->method->value}" : '';
+
             return match ($this->type) {
                 IndexType::PRIMARY => "PRIMARY KEY {$columnsSql}",
-                IndexType::UNIQUE => "CREATE UNIQUE INDEX {$nameSql}_udx ON {$tableName}"
-                    . " {$columnsSql}  USING {$this->method->value}",
-                IndexType::INDEX => "CREATE INDEX {$nameSql}_idx ON {$tableName}"
-                    . " {$columnsSql} USING {$this->method->value}",
+                IndexType::UNIQUE => "CREATE UNIQUE INDEX {$nameSql} ON {$tableName}{$methodSql}{$columnsSql}",
+                IndexType::INDEX => "CREATE INDEX {$nameSql} ON {$tableName}{$methodSql}{$columnsSql}",
             };
         }
 
         if ($dialect === 'pgsql') {
-            $methodSql = $this->method !== IndexMethod::BTREE ? "USING {$this->method->value}" : '';
+            $usingSql = " USING {$this->method->value}"; // В PG принято всегда указывать метод
             $whereSql = $this->where ? " WHERE {$this->where}" : '';
             $includeSql = !empty($this->includeColumns)
                 ? ' INCLUDE (' . implode(', ', $this->includeColumns) . ')'
@@ -48,10 +64,10 @@ class Index implements StructureInterface
 
             return match ($this->type) {
                 IndexType::PRIMARY => "PRIMARY KEY {$columnsSql}",
-                IndexType::UNIQUE => "CREATE UNIQUE INDEX {$nameSql}_udx {$methodSql} "
-                    . "ON {$tableName} {$columnsSql}{$includeSql}{$whereSql}",
-                IndexType::INDEX => "CREATE INDEX {$nameSql}_idx {$methodSql} "
-                    . "ON {$tableName} {$columnsSql}{$includeSql}{$whereSql}",
+                IndexType::UNIQUE => "CREATE UNIQUE INDEX {$nameSql} ON {$tableName}{$usingSql}"
+                    . "{$columnsSql}{$includeSql}{$whereSql}",
+                IndexType::INDEX => "CREATE INDEX {$nameSql} ON {$tableName}{$usingSql}"
+                    . "{$columnsSql}{$includeSql}{$whereSql}",
             };
         }
 
